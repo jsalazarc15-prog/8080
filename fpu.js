@@ -1,38 +1,37 @@
  // Javier Adolfo Salazar Carias
   // carne:0900-22-1009
-class CoprocesadorFlotante {
+class FPU {
     constructor() {
-        // Memoria independiente para cada operando
-        this.bufferA = new ArrayBuffer(4);
-        this.viewA = new DataView(this.bufferA);
-        this.floatA = new Float32Array(this.bufferA);
+        // Buffers para conversiones IEEE 754
+        this.bufA = new ArrayBuffer(4);
+        this.viewA = new DataView(this.bufA);
+        this.floatA = new Float32Array(this.bufA);
 
-        this.bufferB = new ArrayBuffer(4);
-        this.viewB = new DataView(this.bufferB);
-        this.floatB = new Float32Array(this.bufferB);
+        this.bufB = new ArrayBuffer(4);
+        this.viewB = new DataView(this.bufB);
+        this.floatB = new Float32Array(this.bufB);
 
-        this.bufferRes = new ArrayBuffer(4);
-        this.viewRes = new DataView(this.bufferRes);
-        this.floatRes = new Float32Array(this.bufferRes);
+        this.bufRes = new ArrayBuffer(4);
+        this.viewRes = new DataView(this.bufRes);
+        this.floatRes = new Float32Array(this.bufRes);
 
         this.resultado = 0;
     }
 
-    // Ahora guarda el byte guiandose por el puerto exacto
     escribirByte(puerto, valor) {
-        if (puerto >= 16 && puerto <= 19) { // Puertos 0x10 a 0x13
-            this.viewA.setUint8(puerto - 16, valor);
-        } else if (puerto >= 20 && puerto <= 23) { // Puertos 0x14 a 0x17
-            this.viewB.setUint8(puerto - 20, valor);
+        if (puerto >= 0x10 && puerto <= 0x13) {
+            this.viewA.setUint8(puerto - 0x10, valor);
+        } else if (puerto >= 0x14 && puerto <= 0x17) {
+            this.viewB.setUint8(puerto - 0x14, valor);
         }
-        this.actualizarUI(); // Actualiza la pantalla en cada paso
+        this.actualizarUI();
     }
 
-    ejecutarOperacion(codigoOp) {
+    ejecutarOperacion(op) {
         let a = this.floatA[0];
         let b = this.floatB[0];
         
-        switch(codigoOp) {
+        switch(op) {
             case 1: this.resultado = a + b; break;
             case 2: this.resultado = a - b; break;
             case 3: this.resultado = a * b; break;
@@ -59,4 +58,4 @@ class CoprocesadorFlotante {
         }
     }
 }
-const fpu = new CoprocesadorFlotante();
+const fpu = new FPU();

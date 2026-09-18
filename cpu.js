@@ -267,27 +267,27 @@ class Intel8080 {
             case 0x37: this.flags.cy = true; break; // STC
             case 0x3F: this.flags.cy = !this.flags.cy; break; // CMC
 
-       // Special - Hardware I/O
-case 0xDB: { // IN
-    const port = this.fetch();
-    if (port >= 32 && port <= 35) { // Puertos 0x20 a 0x23
-        this.registers.a = fpu.leerByteResultado(port - 32);
-    } else {
-        this.registers.a = 0xFF;
-    }
-    break;
-}
-case 0xD3: { // OUT
-    const port = this.fetch();
-    const value = this.registers.a;
+    // Special
+            case 0xDB: { // IN
+                const port = this.fetch();
+                if (port >= 0x20 && port <= 0x23) {
+                    this.registers.a = fpu.leerByteResultado(port - 0x20);
+                } else {
+                    this.registers.a = 0xFF; // Puerto sin conectar
+                }
+                break;
+            }
+            case 0xD3: { // OUT
+                const port = this.fetch();
+                const value = this.registers.a;
 
-    if ((port >= 16 && port <= 19) || (port >= 20 && port <= 23)) {
-        fpu.escribirByte(port, value);
-    } else if (port === 24) { // Puerto 0x18
-        fpu.ejecutarOperacion(value);
-    }
-    break;
-}
+                if ((port >= 0x10 && port <= 0x13) || (port >= 0x14 && port <= 0x17)) {
+                    fpu.escribirByte(port, value);
+                } else if (port === 0x18) {
+                    fpu.ejecutarOperacion(value);
+                }
+                break;
+            }
 case 0xD3: { // OUT - Escribir desde el acumulador (A) hacia un puerto
     const port = this.fetch(); // Leemos hacia qué puerto quiere escribir el ensamblador
     const value = this.registers.a; // El valor siempre sale del acumulador
