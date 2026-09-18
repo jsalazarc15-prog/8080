@@ -1,3 +1,5 @@
+ // Javier Adolfo Salazar Carias
+  // carne:0900-22-1009
 class Intel8080 {
     constructor() {
         this.memory = new Uint8Array(65536);
@@ -265,11 +267,46 @@ class Intel8080 {
             case 0x37: this.flags.cy = true; break; // STC
             case 0x3F: this.flags.cy = !this.flags.cy; break; // CMC
 
-            // Special
-            case 0xDB: this.fetch(); break; // IN (Ignored for now)
-            case 0xD3: this.fetch(); break; // OUT (Ignored for now)
-            case 0xFB: break; // EI
-            case 0xF3: break; // DI
+       // Special - Hardware I/O
+case 0xDB: { // IN
+    const port = this.fetch();
+    if (port >= 32 && port <= 35) { // Puertos 0x20 a 0x23
+        this.registers.a = fpu.leerByteResultado(port - 32);
+    } else {
+        this.registers.a = 0xFF;
+    }
+    break;
+}
+case 0xD3: { // OUT
+    const port = this.fetch();
+    const value = this.registers.a;
+
+    if ((port >= 16 && port <= 19) || (port >= 20 && port <= 23)) {
+        fpu.escribirByte(port, value);
+    } else if (port === 24) { // Puerto 0x18
+        fpu.ejecutarOperacion(value);
+    }
+    break;
+}
+case 0xD3: { // OUT - Escribir desde el acumulador (A) hacia un puerto
+    const port = this.fetch(); // Leemos hacia qué puerto quiere escribir el ensamblador
+    const value = this.registers.a; // El valor siempre sale del acumulador
+
+    // --- COPROCESADOR FPU: Recibir datos ---
+    // Puertos 16 a 19 (0x10 a 0x13): Operando A
+    if (port >= 16 && port <= 19) {
+        fpu.recibirByteOperando(value, true);
+    }
+    // Puertos 20 a 23 (0x14 a 0x17): Operando B
+    else if (port >= 20 && port <= 23) {
+        fpu.recibirByteOperando(value, false);
+    }
+    // Puerto 24 (0x18): Comando de Ejecución
+    else if (port === 24) {
+        fpu.ejecutarOperacion(value);
+    }
+    break;
+}
         }
     }
 

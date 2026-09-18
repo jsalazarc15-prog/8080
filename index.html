@@ -1,3 +1,5 @@
+ // Javier Adolfo Salazar Carias
+  // carne:0900-22-1009
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,6 +94,17 @@ HLT"></textarea>
                     </div>
                     <div id="memory-table"></div>
                 </div>
+
+             <!-- PANEL DEL COPROCESADOR FPU -->
+            <div class="card fpu">
+                <h3>Coprocesador IEEE 754</h3>
+                <p style="font-size: 0.8em; margin-top: -5px; color: #aaa;">OUT 10h-13h (A) | OUT 14h-17h (B) | OUT 18h (Cmd)</p>
+                <div id="panel-fpu" style="background: #1e1e1e; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 1.1em;">
+                    <span style="color: #4fc3f7; font-weight: bold;">Op A:</span> <span style="color: #e0e0e0;">0.0000</span> <br>
+                    <span style="color: #4fc3f7; font-weight: bold;">Op B:</span> <span style="color: #e0e0e0;">0.0000</span> <br>
+                    <span style="color: #fff176; font-weight: bold;">Resultado:</span> <span id="fpu-res" style="color: white; font-weight: bold;">0.0000</span>
+                </div>
+            </div>
             </div>
         </section>
     </main>
@@ -99,5 +112,6 @@ HLT"></textarea>
     <script src="cpu.js"></script>
     <script src="assembler.js"></script>
     <script src="main.js"></script>
+    <script src="fpu.js"></script>
 </body>
 </html>
