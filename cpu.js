@@ -288,25 +288,6 @@ class Intel8080 {
                 }
                 break;
             }
-case 0xD3: { // OUT - Escribir desde el acumulador (A) hacia un puerto
-    const port = this.fetch(); // Leemos hacia qué puerto quiere escribir el ensamblador
-    const value = this.registers.a; // El valor siempre sale del acumulador
-
-    // --- COPROCESADOR FPU: Recibir datos ---
-    // Puertos 16 a 19 (0x10 a 0x13): Operando A
-    if (port >= 16 && port <= 19) {
-        fpu.recibirByteOperando(value, true);
-    }
-    // Puertos 20 a 23 (0x14 a 0x17): Operando B
-    else if (port >= 20 && port <= 23) {
-        fpu.recibirByteOperando(value, false);
-    }
-    // Puerto 24 (0x18): Comando de Ejecución
-    else if (port === 24) {
-        fpu.ejecutarOperacion(value);
-    }
-    break;
-}
         }
     }
 
